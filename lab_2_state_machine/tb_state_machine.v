@@ -24,8 +24,8 @@ module tb_state_machine;
 
     reg clk;
     reg rst;
-    reg send;
-    reg [7:0] data;
+    wire send;
+    wire [7:0] data;
     wire txd;
 
     
@@ -37,34 +37,29 @@ module tb_state_machine;
         .txd(txd)
     );
 
+   
+    load_file load_file_inst (
+        .send(send),
+        .data(data)  
+    );
     
-    always #10 clk = ~clk;
+    save_file save_file_inst (
+        .txd(txd),
+        .send(send)
+    );
+    
+    
+    always #2 clk = ~clk;  
 
     initial begin
         
         clk = 0;
-        rst = 1;
-        send = 0;
-        data = 8'b01100001;
+        rst = 0;
         
-        
-        #20 rst = 0;
 
-        
-        #30 send = 1;
-        #20 send = 0;
-
-        
-        #200 data = 8'b011011001;
-  
-        #30 send = 1;
-        #20 send = 0;
-
-        
-        #400;
-        $stop;
+        #20000
+         
+        $finish;
     end
-
 endmodule
-
 
