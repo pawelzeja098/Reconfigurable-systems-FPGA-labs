@@ -134,15 +134,25 @@ wire [8:0] Ys1, Y, Cb1,Cb2, Cb, Cr1,Cr2,Cr;
 //Obciêcie wyników mno¿enia
 wire [8:0] YR_trunc, YG_trunc, YB_trunc, CbR_trunc, CbG_trunc, CbB_trunc, CrR_trunc,CrG_trunc,CrB_trunc;
 
-assign YR_trunc = YR[28:20];
-assign YG_trunc = YG[28:20];
-assign YB_trunc = YB[28:20];
-assign CbR_trunc = CbR[28:20];
-assign CbG_trunc = CbG[28:20];
-assign CbB_trunc = CbB[28:20];
-assign CrR_trunc = CrR[28:20];
-assign CrG_trunc = CrG[28:20];
-assign CrB_trunc = CrB[28:20];
+//assign YR_trunc = YR[28:20];
+//assign YG_trunc = YG[28:20];
+//assign YB_trunc = YB[28:20];
+//assign CbR_trunc = CbR[28:20];
+//assign CbG_trunc = CbG[28:20];
+//assign CbB_trunc = CbB[28:20];
+//assign CrR_trunc = CrR[28:20];
+//assign CrG_trunc = CrG[28:20];
+//assign CrB_trunc = CrB[28:20];
+
+assign YR_trunc = YR[25:17];
+assign YG_trunc = YG[25:17];
+assign YB_trunc = YB[25:17];
+assign CbR_trunc = CbR[25:17];
+assign CbG_trunc = CbG[25:17];
+assign CbB_trunc = CbB[25:17];
+assign CrR_trunc = CrR[25:17];
+assign CrG_trunc = CrG[25:17];
+assign CrB_trunc = CrB[25:17];
 
 //sumatory
 c_addsub_0 Y1_add(
@@ -226,7 +236,7 @@ assign de_out = delayed_signals[2];
 assign hsync_out = delayed_signals[1];
 assign vsync_out = delayed_signals[0];
 
-assign pixel_out = {Y_delay,Cb,Cr};
+assign pixel_out = {Y_delay[7:0],Cb[7:0],Cr[7:0]};
 
 
 endmodule
