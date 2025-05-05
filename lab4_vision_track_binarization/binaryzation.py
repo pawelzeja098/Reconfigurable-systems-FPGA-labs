@@ -46,6 +46,10 @@ def main():
     # cv2.imshow("Imagade ycbr",image)
     # cv2.waitKey(0)
 
+    img_scl = cv2.resize(image, (64, 64), interpolation=cv2.INTER_LINEAR)
+
+    cv2.imwrite("./handppm.ppm",img_scl)
+
     ycbr_image = convert_rgb_to_YCbCr(image)
 
     ycbr_image = cv2.resize(ycbr_image, (64, 64), interpolation=cv2.INTER_LINEAR)
