@@ -130,7 +130,7 @@ mult_gen_0 CrB_mult(
 //assign Cr = {CrR,CrG,CrB};
 
 //Wynikowe sumatorów
-wire [8:0] Ys1, Y, Cb1,Cb2, Cb, Cr1,Cr2,Cr;
+wire [8:0] Ys2,Ys12,Ys1, Y, Cb1,Cb2, Cb, Cr1,Cr2,Cr;
 //Obciêcie wyników mno¿enia
 wire [8:0] YR_trunc, YG_trunc, YB_trunc, CbR_trunc, CbG_trunc, CbB_trunc, CrR_trunc,CrG_trunc,CrB_trunc;
 
@@ -144,15 +144,15 @@ wire [8:0] YR_trunc, YG_trunc, YB_trunc, CbR_trunc, CbG_trunc, CbB_trunc, CrR_tr
 //assign CrG_trunc = CrG[28:20];
 //assign CrB_trunc = CrB[28:20];
 
-assign YR_trunc = YR[25:17];
-assign YG_trunc = YG[25:17];
-assign YB_trunc = YB[25:17];
-assign CbR_trunc = CbR[25:17];
-assign CbG_trunc = CbG[25:17];
-assign CbB_trunc = CbB[25:17];
-assign CrR_trunc = CrR[25:17];
-assign CrG_trunc = CrG[25:17];
-assign CrB_trunc = CrB[25:17];
+assign YR_trunc = {YR[35],YR[24:17]};
+assign YG_trunc = {YG[35],YG[24:17]};
+assign YB_trunc = {YB[35],YB[24:17]};
+assign CbR_trunc = {CbR[35],CbR[24:17]};
+assign CbG_trunc = {CbG[35],CbG[24:17]};
+assign CbB_trunc = {CbB[35],CbB[24:17]};
+assign CrR_trunc = {CrR[35],CrR[24:17]};
+assign CrG_trunc = {CrG[35],CrG[24:17]};
+assign CrB_trunc = {CrB[35],CrB[24:17]};
 
 //sumatory
 c_addsub_0 Y1_add(
@@ -165,7 +165,15 @@ c_addsub_0 Y1_add(
 c_addsub_0 Y2_add(
     .CLK(clk),
     .A(YB_trunc),
-    .B(Ys1),
+    .B(9'b000000000),
+    .S(Ys2)
+    
+);
+
+c_addsub_0 Y3_add(
+    .CLK(clk),
+    .A(Ys1),
+    .B(Ys2),
     .S(Y)
     
 );
@@ -181,14 +189,14 @@ c_addsub_0 Cb1_add(
 c_addsub_0 Cb2_add(
     .CLK(clk),
     .A(CbB_trunc),
-    .B(Cb1),
+    .B(9'b010000000),
     .S(Cb2)
 );
 
 c_addsub_0 Cb3_add(
     .CLK(clk),
-    .A(Cb2),
-    .B(9'b010000000),
+    .A(Cb1),
+    .B(Cb2),
     .S(Cb)
 );
 
@@ -202,31 +210,31 @@ c_addsub_0 Cr1_add(
 c_addsub_0 Cr2_add(
     .CLK(clk),
     .A(CrB_trunc),
-    .B(Cr1),
+    .B(9'b010000000),
     .S(Cr2)
 );
 
 c_addsub_0 Cr3_add(
     .CLK(clk),
-    .A(Cr2),
-    .B(9'b010000000),
+    .A(Cr1),
+    .B(Cr2),
     .S(Cr)
 
 );
 wire [8:0] Y_delay;
 //Delay Y
-delayline #(.N(9), .DELAY(1)) delay_Y(
-    .clk(clk),
-    .d(Y),
-    .q(Y_delay)
+//delayline #(.N(9), .DELAY(1)) delay_Y(
+//    .clk(clk),
+//    .d(Y),
+//    .q(Y_delay)
 
-);
+//);
 
 wire [2:0] concatenated_signals; 
 wire [2:0] delayed_signals;
 assign concatenated_signals = {de_in, hsync_in, vsync_in};
 
-delayline #(.N(3), .DELAY(7)) delay_synchsigs(
+delayline #(.N(3), .DELAY(5)) delay_synchsigs(
     .clk(clk),
     .d(concatenated_signals),
     .q(delayed_signals)
@@ -235,8 +243,13 @@ delayline #(.N(3), .DELAY(7)) delay_synchsigs(
 assign de_out = delayed_signals[2];
 assign hsync_out = delayed_signals[1];
 assign vsync_out = delayed_signals[0];
+wire [7:0] Y_fin,Cb_fin,Cr_fin;
 
-assign pixel_out = {Y_delay[7:0],Cb[7:0],Cr[7:0]};
+assign Y_fin = Y[7:0];
+assign Cb_fin = Cb[7:0];
+assign Cr_fin = Cr[7:0]; 
+
+assign pixel_out = {Y_fin[7:0],Cb_fin[7:0],Cr_fin[7:0]};
 
 
 endmodule
