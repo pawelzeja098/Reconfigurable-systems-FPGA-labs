@@ -34,11 +34,12 @@ module centroid#
     input vsync,
     input mask,
     
+    
     output [10:0] x,
     output [10:0] y
     );
 
-wire [31:0] quotient;
+//wire [31:0] quotient;
 wire qvx, qvy;
 
 reg [31:0]res_x; 
@@ -67,7 +68,7 @@ divider_32_21_0 xsc(
 divider_32_21_0 ysc(
     .clk(clk),
     .start(do_divide_y),
-    .dividend(m10),
+    .dividend(m01),
     .divisor(m00),
     .quotient(quotient_y),
     .qv(qvy)
@@ -90,6 +91,8 @@ reg qvy_flag = 0;
 always @(posedge clk) begin
     if (eof == 1'b1) begin
         eof_flag <= 1;
+        do_divide_x <= 1;
+        do_divide_y <= 1;
     end
     
     if (qvx == 1'b1) begin
@@ -119,18 +122,17 @@ always @(posedge clk) begin
             end
     
         x_pos <= x_pos + 1;
-        if(x_pos == IMG_W) begin
+        if(x_pos == IMG_W - 1) begin
             x_pos <= 0;
             y_pos <= y_pos + 1;
             
-            if(y_pos == IMG_H) begin
+            if(y_pos == IMG_H - 1) begin
                 y_pos <= 0;
             end
         end
         
         end if (eof_flag) begin
-            do_divide_x <= 1;
-            do_divide_y <= 1;
+            
             
             if (qvx_flag && do_divide_x) begin
             
@@ -170,7 +172,7 @@ always @(posedge clk) begin
 end
 
 assign eof = (prev_vsync == 1'b0 & vsync == 1'b1) ? 1'b1 : 1'b0;
-assign x = res_x[12:2];
-assign y = res_y[12:2];
+assign x = res_x[10:0];
+assign y = res_y[10:0];
 
 endmodule
